@@ -8,6 +8,8 @@ public class Enemy_01_Controller : MonoBehaviour {
 	public float maxHeight;
 	public float frequency;
 
+	public GameObject explosion;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -29,8 +31,9 @@ public class Enemy_01_Controller : MonoBehaviour {
 		if (other.tag == "Sword") {			
 			Weapon weapon = other.GetComponent<Weapon> ();
 			if (weapon.inAttackMotion) {
-				Debug.Log ("collide");
-				//Destroy (gameObject);
+				Debug.Log ("Sword hit");
+				Instantiate (explosion, transform.position, transform.rotation);
+				Destroy (gameObject);
 			}
 		} else {
 

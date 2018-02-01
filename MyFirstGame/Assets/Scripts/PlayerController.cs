@@ -4,12 +4,11 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
-
-
 	private Rigidbody rb;
 	//public float accelaration = 5;
 	public float speed = 5.0f;
 	public float maxSpeed = 30.0f;
+
 	private float attackDuration = 1.0f;
 	private float attackPreparePartRatio = 0.9f; 
 
@@ -38,38 +37,48 @@ public class PlayerController : MonoBehaviour {
 			rb.velocity = rb.velocity.normalized * maxSpeed;
 		}*/
 
+		// Attack motion
 		float currentTime = Time.time;
-
-		// Attack animation
 		if (currentTime > attackBeginTime && currentTime < attackEndTime) {
 			float prepareTime = attackDuration * attackPreparePartRatio;
 			float realAttackTime = attackDuration - prepareTime;
 			GameObject rightArm = GameObject.FindWithTag ("RightArm");
 			Vector3 original = rightArm.transform.localRotation.eulerAngles;
 			if (currentTime < attackBeginTime + prepareTime) { // prepare motion
-
 				float beginAngle = 0;
 				float endAngle = -90;
 				float progressRatio = (currentTime - attackBeginTime) / prepareTime;
 				rightArm.transform.localRotation = Quaternion.Euler (new Vector3 (beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
 				//rightArm.transform.localScale = new Vector3(10, 10, 10);
 				//Destroy (rightArm);
-				Debug.Log ("Here1:  " + progressRatio + rightArm);
-			} else {				
+				//Debug.Log ("Here1:  " + progressRatio + rightArm);
+			} else {	
+				GameObject.FindWithTag ("Sword").GetComponent<Weapon> ().inAttackMotion = true;
 				float beginAngle = -90;
 				float endAngle = 20;
 				float progressRatio = (currentTime - (attackBeginTime + prepareTime)) / realAttackTime;
 				rightArm.transform.localRotation = Quaternion.Euler (new Vector3 (beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
-				Debug.Log("Here2:  " + progressRatio);
-
+				//Debug.Log("Here2:  " + progressRatio);
 			}
 		} else {
-			UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
-			agent.enabled = true;
-			RaycastHit hit;
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			if (Physics.Raycast(ray, out hit)) {
-				/*
+
+		}
+	}
+		
+	void Update() {
+		float currentTime = Time.time;
+		// Ignore input while in attack motion
+		if (currentTime < attackEndTime) {
+			return;
+		}
+		GameObject.FindWithTag ("Sword").GetComponent<Weapon> ().inAttackMotion = false;
+
+		UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
+		agent.enabled = true;
+		RaycastHit hit;
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		if (Physics.Raycast(ray, out hit)) {
+			/*
 			if (Input.GetMouseButtonDown (0)) { // select unit
 				//Debug.Log("Left click");
 				bool isClicked = hit.collider == this.GetComponent<Collider>();
@@ -87,31 +96,20 @@ public class PlayerController : MonoBehaviour {
 				}
 			}
 			*/
-				if (Input.GetMouseButtonDown(1)) { // move unit
-					// Immediately face destination
-					Face(hit.point);
-					agent.destination = hit.point;	
-				}
+			if (Input.GetMouseButtonDown(1)) { // move unit
+				// Immediately face destination
+				Face(hit.point);
+				agent.destination = hit.point;	
+			}
 
-				if (Input.GetKey(KeyCode.Q)) {
-					Attack(hit.point);
-				}
+			if (Input.GetKey(KeyCode.Q)) {
+				Attack(hit.point);
 			}
 		}
-	}
-
-	void Update() {
 		MoveCamera ();
 	}
 
-	// Destroy everything that enters the trigger
-	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.CompareTag ("Pickup")) {
-			other.gameObject.SetActive(false);
-			count = count + 1;
 
-		}
-	}
 
 	/*
 	void SelectSelf(bool toBeSelected) {
