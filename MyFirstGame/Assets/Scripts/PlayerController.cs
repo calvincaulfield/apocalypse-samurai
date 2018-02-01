@@ -9,8 +9,8 @@ public class PlayerController : MonoBehaviour {
 	public float speed = 5.0f;
 	public float maxSpeed = 30.0f;
 
-	private float attackDuration = 1.0f;
-	private float attackPreparePartRatio = 0.9f; 
+	private float attackDuration = 0.5f;
+	private float attackPreparePartRatio = 0.7f; 
 
 	private int count;
 	private GameObject camera;
@@ -96,7 +96,7 @@ public class PlayerController : MonoBehaviour {
 				}
 			}
 			*/
-			if (Input.GetMouseButtonDown(1)) { // move unit
+			if (Input.GetMouseButton(1)) { // move unit
 				// Immediately face destination
 				Face(hit.point);
 				agent.destination = hit.point;	
