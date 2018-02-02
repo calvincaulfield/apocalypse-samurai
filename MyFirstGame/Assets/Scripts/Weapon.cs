@@ -6,6 +6,7 @@ public class Weapon : MonoBehaviour {
 
 	public bool inAttackMotion;
 	public GameObject explosion;
+	public AudioSource explosionSound;
 
 	// Collision with enemy
 	void OnTriggerEnter(Collider other) {
@@ -13,6 +14,8 @@ public class Weapon : MonoBehaviour {
 			//Debug.Log ("Collided!");
 			Vector3 collisionPoint = GetComponent<Collider> ().ClosestPointOnBounds (other.transform.position);
 			Instantiate (explosion, collisionPoint, Quaternion.identity);
+			explosionSound.Play ();
+			Destroy (other.gameObject);
 		}
 	}
 }

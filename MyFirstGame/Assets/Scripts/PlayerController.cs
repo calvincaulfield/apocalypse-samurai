@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour {
 	public float speed = 5.0f;
 	public float maxSpeed = 30.0f;
 
+	public AudioSource swordSwing;
+
 	private float attackDuration = 0.5f;
 	private float attackPreparePartRatio = 0.7f; 
 
@@ -52,7 +54,7 @@ public class PlayerController : MonoBehaviour {
 				//rightArm.transform.localScale = new Vector3(10, 10, 10);
 				//Destroy (rightArm);
 				//Debug.Log ("Here1:  " + progressRatio + rightArm);
-			} else {	
+			} else {
 				GameObject.FindWithTag ("Sword").GetComponent<Weapon> ().inAttackMotion = true;
 				float beginAngle = -90;
 				float endAngle = 20;
@@ -142,6 +144,7 @@ public class PlayerController : MonoBehaviour {
 		attackBeginTime = Time.time;
 		attackEndTime = Time.time + attackDuration;
 		GetComponent<UnityEngine.AI.NavMeshAgent> ().enabled = false;
+		swordSwing.Play ();
 	}
 
 	void MoveCamera() {

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WeakPoint : MonoBehaviour {
 	public GameObject bloodSpray;
+	public AudioSource tookDamage;
 
 	// Collision with enemy
 	void OnTriggerEnter(Collider other) {
@@ -12,6 +13,7 @@ public class WeakPoint : MonoBehaviour {
 			//Debug.Log ("Collided!");
 			Vector3 collisionPoint = GetComponent<Collider> ().ClosestPointOnBounds (other.transform.position);
 			Instantiate (bloodSpray, collisionPoint, Quaternion.identity);
+			tookDamage.Play ();
 		}
 	}
 }

@@ -62,6 +62,7 @@
      <Compile Include="Assets\Scripts\Weapon.cs" />
      <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\FxSplash.cs" />
      <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\LaunchEffect.cs" />
+     <None Include="Assets\Sound\explosionsoundslite\readme.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
