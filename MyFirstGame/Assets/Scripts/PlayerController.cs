@@ -4,41 +4,34 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
-	private Rigidbody rb;
-	//public float accelaration = 5;
-	public float speed = 5.0f;
-	public float maxSpeed = 30.0f;
-
 	public AudioSource swordSwing;
+	public int level;
+	public int exp;
+	public int expPerLevel;
+
+	public GameObject weapon;
 
 	private float attackDuration = 0.5f;
 	private float attackPreparePartRatio = 0.7f; 
-
-	private int count;
 	private GameObject camera;
-	//private bool isSelected; 
 	private float attackBeginTime;
 	private float attackEndTime;
 
-	// Use this for initialization
 	void Start () {
-		rb = GetComponent<Rigidbody> ();
-		count = 0;
-		//isSelected = false;
 		camera = GameObject.FindWithTag ("MainCamera");
+		level = 1;
+		exp = 0;
+	}
+		
+	public void Kill(GameObject enemy) {
+		exp += enemy.GetComponent<WeakPoint> ().exp;
+		if (exp >= level * expPerLevel) {
+			level += 1;
+			exp = 0;
+		}
 	}
 
-
 	void FixedUpdate() {
-		/*
-		float moveHorizontal = Input.GetAxis ("Horizontal");
-		float moveVertical = Input.GetAxis ("Vertical");
-
-		rb.AddForce (new Vector3(moveHorizontal, 0.0f, moveVertical ) * speed);
-		if (rb.velocity.magnitude > maxSpeed) {
-			rb.velocity = rb.velocity.normalized * maxSpeed;
-		}*/
-
 		// Attack motion
 		float currentTime = Time.time;
 		if (currentTime > attackBeginTime && currentTime < attackEndTime) {
@@ -55,7 +48,7 @@ public class PlayerController : MonoBehaviour {
 				//Destroy (rightArm);
 				//Debug.Log ("Here1:  " + progressRatio + rightArm);
 			} else {
-				GameObject.FindWithTag ("Sword").GetComponent<Weapon> ().inAttackMotion = true;
+				weapon.GetComponent<Weapon> ().inAttackMotion = true;
 				float beginAngle = -90;
 				float endAngle = 20;
 				float progressRatio = (currentTime - (attackBeginTime + prepareTime)) / realAttackTime;
@@ -73,31 +66,13 @@ public class PlayerController : MonoBehaviour {
 		if (currentTime < attackEndTime) {
 			return;
 		}
-		GameObject.FindWithTag ("Sword").GetComponent<Weapon> ().inAttackMotion = false;
+		weapon.GetComponent<Weapon> ().inAttackMotion = false;
 
 		UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
 		agent.enabled = true;
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		if (Physics.Raycast(ray, out hit)) {
-			/*
-			if (Input.GetMouseButtonDown (0)) { // select unit
-				//Debug.Log("Left click");
-				bool isClicked = hit.collider == this.GetComponent<Collider>();
-				//Debug.Log("Clicked");
-				if (Input.GetKey(KeyCode.LeftShift)) { // addition, subtraction
-					if (isClicked) {
-						selectSelf(!isSelected);
-					}
-				} else { // reset selection
-					if (isClicked) {
-						selectSelf(true);
-					} else {
-						selectSelf(false);
-					}
-				}
-			}
-			*/
 			if (Input.GetMouseButton(1)) { // move unit
 				// Immediately face destination
 				Face(hit.point);
@@ -111,33 +86,12 @@ public class PlayerController : MonoBehaviour {
 		MoveCamera ();
 	}
 
-
-
-	/*
-	void SelectSelf(bool toBeSelected) {
-		isSelected = toBeSelected;
-		if (toBeSelected) {
-			Debug.Log ("Selected");
-			GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
-
-
-		} else {
-			Debug.Log ("Unselected");
-			GetComponent<Renderer>().material.SetColor("_Color", Color.red);
-		}
-	}*/
 	void Face(Vector3 destination) {
 		Vector3 direction = destination - transform.position;
 		transform.rotation = Quaternion.LookRotation (new Vector3(direction.x, 0, direction.z));
-		rb.velocity = Vector3.zero;
+		GetComponent<Rigidbody>().velocity = Vector3.zero;
 	}
 
-
-	void moveTo(Vector3 destination) {
-		Vector3 direction = destination - transform.position;
-		Vector3 velocity = new Vector3 (direction.x, 0, direction.z);
-		rb.velocity = velocity.normalized * speed;
-	}
 
 	void Attack(Vector3 destination) {
 		Face (destination);
@@ -148,7 +102,6 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void MoveCamera() {
-		Vector3 currentCameraPosition = camera.transform.position;
-		camera.transform.position = new Vector3 (transform.position.x + 10, 14, transform.position.z - 10);
+		camera.transform.position = transform.position + GameController.cameraOffset;
 	}
 }

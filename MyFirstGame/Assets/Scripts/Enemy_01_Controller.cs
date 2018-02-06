@@ -7,13 +7,10 @@ public class Enemy_01_Controller : MonoBehaviour {
 	public float minHeight;
 	public float maxHeight;
 	public float frequency;
+	public Weapon weapon;
 
+	private float previousRatio = 0;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
 	// Update is called once per frame
 	void Update () {
 		float period = 1 / frequency;
@@ -21,8 +18,15 @@ public class Enemy_01_Controller : MonoBehaviour {
 		float height = minHeight + (maxHeight - minHeight) * ratio;
 		if (height > maxHeight) {
 			height -= 2 * (height - maxHeight);
-		}
+		} 
 		transform.position = new Vector3(transform.position.x, height, transform.position.z);
+		if (previousRatio > ratio) { // happens once per period
+			Reload();
+		}
+		previousRatio = ratio;
 	}
-		
+
+	void Reload() {
+		weapon.inAttackMotion = true;
+	}
 }
