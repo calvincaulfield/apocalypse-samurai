@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_01_Body : WeakPoint {
+public class Enemy_01_Body : WeakBody {
 
 	public float minHeight;
 	public float maxHeight;

@@ -58,7 +58,7 @@
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\LinearAnimation.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
-     <Compile Include="Assets\Scripts\WeakPoint.cs" />
+     <Compile Include="Assets\Scripts\WeakBody.cs" />
      <Compile Include="Assets\Scripts\Weapon.cs" />
      <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\FxSplash.cs" />
      <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\LaunchEffect.cs" />

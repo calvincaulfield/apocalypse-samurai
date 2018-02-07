@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour {
 	public int expPerLevel;
 
 	public GameObject weapon;
+	public GameObject infoExp;
+	public GameController gameController;
+	public Collider terrain;
 
 	private float attackDuration = 0.5f;
 	private float attackPreparePartRatio = 0.7f; 
@@ -24,10 +27,15 @@ public class PlayerController : MonoBehaviour {
 	}
 		
 	public void Kill(EnemyController enemy) {
+		GameObject thisObject = Instantiate (infoExp, infoExp.transform.position, Quaternion.identity);
+		thisObject.SetActive (true);
+		thisObject.GetComponent<TextMesh> ().text = "経験値 +" + enemy.exp;
+
 		exp += enemy.exp;
 		if (exp >= level * expPerLevel) {
 			level += 1;
 			exp = 0;
+			gameController.AlertLevelUp ();
 		}
 	}
 
@@ -72,7 +80,7 @@ public class PlayerController : MonoBehaviour {
 		agent.enabled = true;
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		if (Physics.Raycast(ray, out hit)) {
+		if (terrain.Raycast(ray, out hit, 1000)) {
 			if (Input.GetMouseButton(1)) { // move unit
 				// Immediately face destination
 				Face(hit.point);
@@ -83,6 +91,10 @@ public class PlayerController : MonoBehaviour {
 				Attack(hit.point);
 			}
 		}
+
+		gameController.SetLevel (level);
+		gameController.SetHp (GetComponent<WeakBody>().hp, GetComponent<WeakBody>().maxHp);
+		gameController.SetExp (exp, level * expPerLevel);
 	}
 
 	void Face(Vector3 destination) {

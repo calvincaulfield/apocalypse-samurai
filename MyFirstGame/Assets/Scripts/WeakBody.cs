@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class WeakPoint : MonoBehaviour {
+public class WeakBody : MonoBehaviour {
 	public bool isPlayer;
 	public bool isEnemy;
 	public int hp;
@@ -25,7 +25,7 @@ public class WeakPoint : MonoBehaviour {
 
 	protected virtual void Update() {		
 		if (isEnemy) {
-			display2.GetComponent<TextMesh> ().text = "" + hp + "/" + maxHp;
+			display2.GetComponent<TextMesh> ().text = "HP " + hp + "/" + maxHp;
 		} else {
 
 		}
