@@ -8,12 +8,12 @@ public class GameController : MonoBehaviour {
 
 	public static Vector3 cameraOffset = new Vector3 (10, 14, -10);
 
+	public GameObject camera;
 	public PlayerController playerController;
 
 	public Text text_Level;
 	public Text text_Hp;
 	public Text text_Exp;
-	public int expPerLevel;
 
 
 	public void SetLevel(int level) {
@@ -29,8 +29,14 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update() {
+		MoveCamera ();
+
 		SetLevel (playerController.level);
 		SetHp (playerController.GetComponent<WeakPoint>().hp);
 		SetExp (playerController.exp);
+	}
+
+	void MoveCamera() {
+		camera.transform.position = playerController.gameObject.transform.position + cameraOffset;
 	}
 }

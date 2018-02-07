@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_01_Controller : MonoBehaviour {
+public class Enemy_01_Body : WeakPoint {
 
 	public float minHeight;
 	public float maxHeight;
@@ -12,7 +12,8 @@ public class Enemy_01_Controller : MonoBehaviour {
 	private float previousRatio = 0;
 
 	// Update is called once per frame
-	void Update () {
+	protected override void Update () {
+		base.Update ();
 		float period = 1 / frequency;
 		float ratio = 2 * (Time.time % period) / period; // 0 ~ 2 per period sec
 		float height = minHeight + (maxHeight - minHeight) * ratio;

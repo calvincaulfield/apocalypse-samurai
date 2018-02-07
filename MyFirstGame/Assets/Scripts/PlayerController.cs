@@ -23,8 +23,8 @@ public class PlayerController : MonoBehaviour {
 		exp = 0;
 	}
 		
-	public void Kill(GameObject enemy) {
-		exp += enemy.GetComponent<WeakPoint> ().exp;
+	public void Kill(EnemyController enemy) {
+		exp += enemy.exp;
 		if (exp >= level * expPerLevel) {
 			level += 1;
 			exp = 0;
@@ -83,7 +83,6 @@ public class PlayerController : MonoBehaviour {
 				Attack(hit.point);
 			}
 		}
-		MoveCamera ();
 	}
 
 	void Face(Vector3 destination) {
@@ -99,9 +98,5 @@ public class PlayerController : MonoBehaviour {
 		attackEndTime = Time.time + attackDuration;
 		GetComponent<UnityEngine.AI.NavMeshAgent> ().enabled = false;
 		swordSwing.Play ();
-	}
-
-	void MoveCamera() {
-		camera.transform.position = transform.position + GameController.cameraOffset;
 	}
 }

@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
 
-	public GameObject display;
 	public int exp;
+	public GameObject infoDamage;
 
 	void Update() {
-		display.GetComponent<TextMesh> ().text = "" + GetComponent<WeakPoint>().hp + "/" + GetComponent<WeakPoint>().maxHp;
-		gameObject.transform.Find ("Info").rotation = Quaternion.LookRotation (-GameController.cameraOffset);
+		
+	}
+
+	public void TookDamage(int damage) {
+		GameObject thisObject = Instantiate (infoDamage, infoDamage.transform.position, Quaternion.identity);
+		thisObject.SetActive (true);
 	}
 
 }
