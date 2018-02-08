@@ -51,11 +51,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Models\Gems Ultimate Pack\Scripts\AnimationScript.cs" />
+     <Compile Include="Assets\Scripts\Bgm.cs" />
      <Compile Include="Assets\Scripts\DestroyByTime.cs" />
      <Compile Include="Assets\Scripts\Enemy_01_Body.cs" />
+     <Compile Include="Assets\Scripts\Enemy_01_Weapon.cs" />
      <Compile Include="Assets\Scripts\EnemyController.cs" />
      <Compile Include="Assets\Scripts\FaceUser.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
+     <Compile Include="Assets\Scripts\Item.cs" />
+     <Compile Include="Assets\Scripts\ItemGetter.cs" />
      <Compile Include="Assets\Scripts\LinearAnimation.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\WeakBody.cs" />

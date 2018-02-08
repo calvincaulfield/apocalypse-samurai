@@ -5,8 +5,24 @@ using UnityEngine;
 public class Weapon : MonoBehaviour {
 
 	public int attackDamage;
+	public int staminaCost;
 	public bool inAttackMotion;
 	public bool playerWeapon;
 	public GameObject wielder;
 
+	public virtual void Start() {
+
+	}
+
+	public void StartAttack() {
+		GetComponent<AudioSource> ().Play ();
+		inAttackMotion = true;
+	}
+
+	public void StopAttack() {
+		inAttackMotion = false;
+	}  
+
+	public virtual void Hit() {
+	}
 }

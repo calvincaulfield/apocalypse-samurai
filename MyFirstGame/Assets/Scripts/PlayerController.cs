@@ -4,13 +4,21 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
-	public AudioSource swordSwing;
+	public float stamina;
+	public float maxStamina;
+	public float staminaRecoveryTime;
+	public float staminaRecoveryPerSec;
 	public int level;
 	public int exp;
 	public int expPerLevel;
 
-	public GameObject weapon;
-	public GameObject infoExp;
+	public string infoExpColor;
+	public string infoHealColor;
+
+	public AudioSource attackVoice;
+
+	public Weapon weapon;
+	public GameObject info;
 	public GameController gameController;
 	public Collider terrain;
 
@@ -19,17 +27,21 @@ public class PlayerController : MonoBehaviour {
 	private GameObject camera;
 	private float attackBeginTime;
 	private float attackEndTime;
+	private WeakBody weakBody;
 
 	void Start () {
 		camera = GameObject.FindWithTag ("MainCamera");
+		weakBody = GetComponent<WeakBody> ();
 		level = 1;
 		exp = 0;
+		stamina = maxStamina;
 	}
 		
 	public void Kill(EnemyController enemy) {
-		GameObject thisObject = Instantiate (infoExp, infoExp.transform.position, Quaternion.identity);
+		GameObject thisObject = Instantiate (info, info.transform.position, Quaternion.identity);
 		thisObject.SetActive (true);
-		thisObject.GetComponent<TextMesh> ().text = "経験値 +" + enemy.exp;
+		thisObject.GetComponent<TextMesh> ().color = ColorFromHex(infoExpColor);
+		thisObject.GetComponent<TextMesh> ().text = "Exp +" + enemy.exp;
 
 		exp += enemy.exp;
 		if (exp >= level * expPerLevel) {
@@ -37,6 +49,26 @@ public class PlayerController : MonoBehaviour {
 			exp = 0;
 			gameController.AlertLevelUp ();
 		}
+	}
+
+	public void TakeItem(Item item) {
+		if (item.type == "heal") {
+			if (weakBody.hp == weakBody.maxHp) {
+				return;
+			}
+			Heal (item.intensity);		}
+
+		item.takenEffect.Play ();
+		Destroy (item.gameObject);
+	}
+
+	void Heal(float amount) {
+		GameObject thisObject = Instantiate (info, info.transform.position, Quaternion.identity);
+		thisObject.SetActive (true);
+		thisObject.GetComponent<TextMesh> ().color = ColorFromHex(infoHealColor);
+		thisObject.GetComponent<TextMesh> ().text = "HP +" + Mathf.RoundToInt(amount);
+
+		weakBody.Heal (amount);
 	}
 
 	void FixedUpdate() {
@@ -56,7 +88,9 @@ public class PlayerController : MonoBehaviour {
 				//Destroy (rightArm);
 				//Debug.Log ("Here1:  " + progressRatio + rightArm);
 			} else {
-				weapon.GetComponent<Weapon> ().inAttackMotion = true;
+				if (!weapon.inAttackMotion) {
+					weapon.StartAttack ();
+				}
 				float beginAngle = -90;
 				float endAngle = 20;
 				float progressRatio = (currentTime - (attackBeginTime + prepareTime)) / realAttackTime;
@@ -74,7 +108,7 @@ public class PlayerController : MonoBehaviour {
 		if (currentTime < attackEndTime) {
 			return;
 		}
-		weapon.GetComponent<Weapon> ().inAttackMotion = false;
+		weapon.StopAttack ();
 
 		UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
 		agent.enabled = true;
@@ -92,9 +126,12 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
+		manageStamina ();
+
 		gameController.SetLevel (level);
-		gameController.SetHp (GetComponent<WeakBody>().hp, GetComponent<WeakBody>().maxHp);
+		gameController.SetHp (weakBody.hp, weakBody.maxHp);
 		gameController.SetExp (exp, level * expPerLevel);
+		gameController.SetStamina (stamina, maxStamina);
 	}
 
 	void Face(Vector3 destination) {
@@ -106,9 +143,34 @@ public class PlayerController : MonoBehaviour {
 
 	void Attack(Vector3 destination) {
 		Face (destination);
-		attackBeginTime = Time.time;
-		attackEndTime = Time.time + attackDuration;
-		GetComponent<UnityEngine.AI.NavMeshAgent> ().enabled = false;
-		swordSwing.Play ();
+		if (stamina > 0) {
+			stamina -= weapon.staminaCost;
+			attackBeginTime = Time.time;
+			attackEndTime = Time.time + attackDuration;
+			GetComponent<UnityEngine.AI.NavMeshAgent> ().enabled = false;
+			attackVoice.Play ();
+		} else {
+			notEnoughStamina ();
+		}
+	}
+
+
+	void manageStamina() {
+		if (Time.time > attackEndTime + staminaRecoveryTime) {
+			stamina += Time.deltaTime * staminaRecoveryPerSec;
+			if (stamina > maxStamina) {
+				stamina = maxStamina;
+			}
+		}
+	}
+
+	void notEnoughStamina() {
+
+	}
+
+	Color ColorFromHex(string hex) {
+		Color color;
+		ColorUtility.TryParseHtmlString (hex, out color);
+		return color;
 	}
 }

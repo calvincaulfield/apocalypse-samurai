@@ -6,9 +6,9 @@ using System;
 public class WeakBody : MonoBehaviour {
 	public bool isPlayer;
 	public bool isEnemy;
-	public int hp;
-	public int maxHp;
-	public int armour;  // 0: no armour, 1: protected
+	public float hp;
+	public float maxHp;
+	public float armour;  // 0: no armour, 1: protected
 
 	public GameObject display2;
 	public EnemyController owner;
@@ -33,13 +33,14 @@ public class WeakBody : MonoBehaviour {
 
 	// Collision with enemy
 	protected virtual void OnTriggerEnter(Collider other) {
-		if (other.tag == "Weapon" && other.GetComponent<Weapon>().inAttackMotion) {
+		if (other.GetComponent<Weapon>() && other.GetComponent<Weapon>().inAttackMotion) {
 			// Weapon cannnot harm its owner even if there is collision
 			if (!isPlayer ^ other.GetComponent<Weapon> ().playerWeapon) {
 				return;
 			}
-	
-			Debug.Log ("Weakpoint collided with weapon!");
+			other.GetComponent<Weapon> ().Hit ();
+
+			//Debug.Log ("WeakBody collided with weapon!");
 			Vector3 collisionPoint = GetComponent<Collider> ().ClosestPointOnBounds (other.transform.position);
 			if (tookDamageVfx) {
 				Instantiate (tookDamageVfx, collisionPoint, Quaternion.identity);
@@ -60,13 +61,20 @@ public class WeakBody : MonoBehaviour {
 				if (explosionSound) {
 					explosionSound.Play ();
 				}
-				Destroy (owner.gameObject);
+				if (owner) {
+					Destroy (owner.gameObject);
+				}
 				if (!isPlayer) {
 					other.GetComponent<Weapon> ().wielder.GetComponent<PlayerController>().Kill (owner);
 				}
 			}
+		}
+	}
 
-			other.GetComponent<Weapon> ().inAttackMotion = false;
+	public virtual void Heal(float amount) {
+		hp += amount;
+		if (hp > maxHp) {
+			hp = maxHp;
 		}
 	}
 }

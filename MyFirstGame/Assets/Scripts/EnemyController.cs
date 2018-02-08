@@ -12,6 +12,7 @@ public class EnemyController : MonoBehaviour {
 	}
 
 	public void TookDamage(int damage) {
+		//Debug.Log ("Enemy Took Damage");
 		GameObject thisObject = Instantiate (infoDamage, infoDamage.transform.position, Quaternion.identity);
 		thisObject.SetActive (true);
 		thisObject.GetComponent<TextMesh> ().text = "" + damage;
