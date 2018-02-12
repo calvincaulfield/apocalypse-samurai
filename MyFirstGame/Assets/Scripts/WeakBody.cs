@@ -10,8 +10,8 @@ public class WeakBody : MonoBehaviour {
 	public float maxHp;
 	public float armour;  // 0: no armour, 1: protected
 
-	public GameObject display2;
-	public EnemyController owner;
+	public GameObject hpInfo;
+	public Unit owner;
 
 	public GameObject tookDamageVfx;
 	public GameObject explosionVfx;
@@ -25,7 +25,7 @@ public class WeakBody : MonoBehaviour {
 
 	protected virtual void Update() {		
 		if (isEnemy) {
-			display2.GetComponent<TextMesh> ().text = "HP " + hp + "/" + maxHp;
+			hpInfo.GetComponent<TextMesh> ().text = "HP " + hp + "/" + maxHp;
 		} else {
 
 		}

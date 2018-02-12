@@ -8,7 +8,7 @@ public class Weapon : MonoBehaviour {
 	public int staminaCost;
 	public bool inAttackMotion;
 	public bool playerWeapon;
-	public GameObject wielder;
+	public PlayerController wielder;
 
 	public virtual void Start() {
 
@@ -25,4 +25,5 @@ public class Weapon : MonoBehaviour {
 
 	public virtual void Hit() {
 	}
+
 }

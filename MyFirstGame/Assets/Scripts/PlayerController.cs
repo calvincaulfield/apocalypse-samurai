@@ -15,6 +15,9 @@ public class PlayerController : MonoBehaviour {
 	public string infoExpColor;
 	public string infoHealColor;
 
+	public float qStamina;
+	public float wStamina;
+
 	public AudioSource attackVoice;
 
 	public Weapon weapon;
@@ -22,12 +25,23 @@ public class PlayerController : MonoBehaviour {
 	public GameController gameController;
 	public Collider terrain;
 
-	private float attackDuration = 0.5f;
-	private float attackPreparePartRatio = 0.7f; 
+
+
+	public float qSpeed = 2.0f;
+	public float qPreparePartRatio = 0.7f; 
+	public float qRecoveryTime = 0.3f; 
+
+	public float wSpeed = 1.0f;
+	public float wRecoveryTime = 0.3f; 
+	private float wStartYRotation = 0.0f;
+
 	private GameObject camera;
 	private float attackBeginTime;
 	private float attackEndTime;
 	private WeakBody weakBody;
+
+
+	private string attackType;
 
 	void Start () {
 		camera = GameObject.FindWithTag ("MainCamera");
@@ -37,7 +51,7 @@ public class PlayerController : MonoBehaviour {
 		stamina = maxStamina;
 	}
 		
-	public void Kill(EnemyController enemy) {
+	public void Kill(Unit enemy) {
 		GameObject thisObject = Instantiate (info, info.transform.position, Quaternion.identity);
 		thisObject.SetActive (true);
 		thisObject.GetComponent<TextMesh> ().color = ColorFromHex(infoExpColor);
@@ -71,44 +85,81 @@ public class PlayerController : MonoBehaviour {
 		weakBody.Heal (amount);
 	}
 
-	void FixedUpdate() {
-		// Attack motion
+	void ShowAttackMotion() {
 		float currentTime = Time.time;
+		float attackDuration = GetAttackDuration();
 		if (currentTime > attackBeginTime && currentTime < attackEndTime) {
-			float prepareTime = attackDuration * attackPreparePartRatio;
-			float realAttackTime = attackDuration - prepareTime;
-			GameObject rightArm = GameObject.FindWithTag ("RightArm");
-			Vector3 original = rightArm.transform.localRotation.eulerAngles;
-			if (currentTime < attackBeginTime + prepareTime) { // prepare motion
-				float beginAngle = 0;
-				float endAngle = -90;
-				float progressRatio = (currentTime - attackBeginTime) / prepareTime;
-				rightArm.transform.localRotation = Quaternion.Euler (new Vector3 (beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
-				//rightArm.transform.localScale = new Vector3(10, 10, 10);
-				//Destroy (rightArm);
-				//Debug.Log ("Here1:  " + progressRatio + rightArm);
-			} else {
+			if (attackType == "Q") {
+				float prepareTime = (attackDuration - qRecoveryTime) * qPreparePartRatio;
+				float realAttackTime = (attackDuration - qRecoveryTime) - prepareTime;
+				GameObject rightArm = GameObject.FindWithTag ("RightArm");
+				Vector3 original = rightArm.transform.localRotation.eulerAngles;
+				if (currentTime < attackBeginTime + prepareTime) { // prepare motion
+					float beginAngle = 0;
+					float endAngle = -90;
+					float progressRatio = (currentTime - attackBeginTime) / prepareTime;
+					rightArm.transform.localRotation = Quaternion.Euler (new Vector3 (beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
+					//rightArm.transform.localScale = new Vector3(10, 10, 10);
+					//Destroy (rightArm);
+					//Debug.Log ("Here1:  " + progressRatio + rightArm);
+				} else {
+					if (currentTime > attackBeginTime + attackDuration - qRecoveryTime) { // Player will be freezed during recovery time
+						return;
+					}
+
+					if (!weapon.inAttackMotion) {
+						weapon.StartAttack ();
+					}
+					float beginAngle = -90;
+					float endAngle = 20;
+					float progressRatio = (currentTime - (attackBeginTime + prepareTime)) / realAttackTime;
+					rightArm.transform.localRotation = Quaternion.Euler (new Vector3 (beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
+					//Debug.Log("Here2:  " + progressRatio);
+				}
+			} else if (attackType == "W") {
+				if (currentTime > attackBeginTime + attackDuration - wRecoveryTime) { // Player will be freezed during recovery time
+					return;
+				}
 				if (!weapon.inAttackMotion) {
 					weapon.StartAttack ();
+					wStartYRotation = transform.localRotation.eulerAngles.y;
 				}
-				float beginAngle = -90;
-				float endAngle = 20;
-				float progressRatio = (currentTime - (attackBeginTime + prepareTime)) / realAttackTime;
-				rightArm.transform.localRotation = Quaternion.Euler (new Vector3 (beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
-				//Debug.Log("Here2:  " + progressRatio);
+				float beginAngle = 60;
+				float endAngle = 360;
+				float progressRatio = (currentTime - attackBeginTime) / (attackDuration - wRecoveryTime);
+				transform.localRotation = Quaternion.Euler (new Vector3 (0, wStartYRotation + beginAngle + (endAngle - beginAngle) * progressRatio, 0));
 			}
 		} else {
-
 		}
 	}
-		
-	void Update() {
-		float currentTime = Time.time;
-		// Ignore input while in attack motion
-		if (currentTime < attackEndTime) {
-			return;
+
+	float GetAttackDuration() {
+		if (attackType == "Q") {
+			return 1 / qSpeed + qRecoveryTime;
+		} else if (attackType == "W") {
+			return 1 / wSpeed + wRecoveryTime;
+		} else {
+			return 5;
 		}
-		weapon.StopAttack ();
+	}
+
+	void Update() {
+		ShowAttackMotion ();
+
+		manageStamina ();
+
+		gameController.SetLevel (level);
+		gameController.SetHp (weakBody.hp, weakBody.maxHp);
+		gameController.SetExp (exp, level * expPerLevel);
+		gameController.SetStamina (stamina, maxStamina);
+
+		bool isInAttackMotion = IsInAttackMotion ();
+		// Ignore input while in attack motion
+		if (isInAttackMotion) {
+			//return;
+		} else {
+			weapon.StopAttack ();
+		}
 
 		UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
 		agent.enabled = true;
@@ -117,21 +168,27 @@ public class PlayerController : MonoBehaviour {
 		if (terrain.Raycast(ray, out hit, 1000)) {
 			if (Input.GetMouseButton(1)) { // move unit
 				// Immediately face destination
-				Face(hit.point);
+				//Face(hit.point);
 				agent.destination = hit.point;	
 			}
 
-			if (Input.GetKey(KeyCode.Q)) {
-				Attack(hit.point);
+			if (!isInAttackMotion) {
+				if (Input.GetKey (KeyCode.Q)) {
+					attackType = "Q";
+					Attack (hit.point);
+				} else if (Input.GetKey (KeyCode.W)) {
+					attackType = "W";
+					Attack (hit.point);
+				} else if (Input.GetKey (KeyCode.E)) {
+					attackType = "E";
+					Attack (hit.point);
+				}
 			}
 		}
+	}
 
-		manageStamina ();
-
-		gameController.SetLevel (level);
-		gameController.SetHp (weakBody.hp, weakBody.maxHp);
-		gameController.SetExp (exp, level * expPerLevel);
-		gameController.SetStamina (stamina, maxStamina);
+	bool IsInAttackMotion() {
+		return Time.time < attackEndTime;
 	}
 
 	void Face(Vector3 destination) {
@@ -142,11 +199,16 @@ public class PlayerController : MonoBehaviour {
 
 
 	void Attack(Vector3 destination) {
+		float currentTime = Time.time;
+		if (GetComponent<Unit>().isInHitRecovery()) {
+			return;
+		}
 		Face (destination);
+		float attackDuration = GetAttackDuration ();
 		if (stamina > 0) {
 			stamina -= weapon.staminaCost;
-			attackBeginTime = Time.time;
-			attackEndTime = Time.time + attackDuration;
+			attackBeginTime = currentTime;
+			attackEndTime = currentTime + attackDuration;
 			GetComponent<UnityEngine.AI.NavMeshAgent> ().enabled = false;
 			attackVoice.Play ();
 		} else {

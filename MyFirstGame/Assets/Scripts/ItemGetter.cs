@@ -6,7 +6,7 @@ public class ItemGetter : MonoBehaviour {
 	public PlayerController player;
 
 	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.tag == "Item") {
+		if (other.GetComponent<Item>()) {
 			player.TakeItem (other.GetComponent<Item> ());
 		}
 	}

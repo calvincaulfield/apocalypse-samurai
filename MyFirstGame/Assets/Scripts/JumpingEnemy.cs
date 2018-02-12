@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_01_Body : WeakBody {
+public class JumpingEnemy: MonoBehaviour {
 
 	public float minHeight;
 	public float maxHeight;
@@ -12,8 +12,7 @@ public class Enemy_01_Body : WeakBody {
 	private float previousRatio = 0;
 
 	// Update is called once per frame
-	protected override void Update () {
-		base.Update ();
+	void Update () {
 		float period = 1 / frequency;
 		float ratio = 2 * (Time.time % period) / period; // 0 ~ 2 per period sec
 		float height = minHeight + (maxHeight - minHeight) * ratio;
