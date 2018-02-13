@@ -56,7 +56,6 @@
      <Compile Include="Assets\Scripts\ChasePlayer.cs" />
      <Compile Include="Assets\Scripts\DeactivateWeaponOnHit.cs" />
      <Compile Include="Assets\Scripts\DestroyByTime.cs" />
-     <Compile Include="Assets\Scripts\Enemy_01_Body.cs" />
      <Compile Include="Assets\Scripts\FaceUser.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\Item.cs" />
