@@ -28,11 +28,11 @@ public class PlayerController : MonoBehaviour {
 
 
 	public float qSpeed = 2.0f;
-	public float qPreparePartRatio = 0.7f; 
-	public float qRecoveryTime = 0.3f; 
+	public float qPreparePartRatio = 0.7f;
+	public float qRecoveryTime = 0.3f;
 
 	public float wSpeed = 1.0f;
-	public float wRecoveryTime = 0.3f; 
+	public float wRecoveryTime = 0.3f;
 	private float wStartYRotation = 0.0f;
 
 	private GameObject camera;
@@ -43,25 +43,25 @@ public class PlayerController : MonoBehaviour {
 
 	private string attackType;
 
-	void Start () {
-		camera = GameObject.FindWithTag ("MainCamera");
-		weakBody = GetComponent<WeakBody> ();
+	void Start() {
+		camera = GameObject.FindWithTag("MainCamera");
+		weakBody = GetComponent<WeakBody>();
 		level = 1;
 		exp = 0;
 		stamina = maxStamina;
 	}
-		
+
 	public void Kill(Unit enemy) {
-		GameObject thisObject = Instantiate (info, info.transform.position, Quaternion.identity);
-		thisObject.SetActive (true);
-		thisObject.GetComponent<TextMesh> ().color = ColorFromHex(infoExpColor);
-		thisObject.GetComponent<TextMesh> ().text = "Exp +" + enemy.exp;
+		GameObject thisObject = Instantiate(info, info.transform.position, Quaternion.identity);
+		thisObject.SetActive(true);
+		thisObject.GetComponent<TextMesh>().color = ColorFromHex(infoExpColor);
+		thisObject.GetComponent<TextMesh>().text = "Exp +" + enemy.exp;
 
 		exp += enemy.exp;
 		if (exp >= level * expPerLevel) {
 			level += 1;
 			exp = 0;
-			gameController.AlertLevelUp ();
+			gameController.AlertLevelUp();
 		}
 	}
 
@@ -70,19 +70,20 @@ public class PlayerController : MonoBehaviour {
 			if (weakBody.hp == weakBody.maxHp) {
 				return;
 			}
-			Heal (item.intensity);		}
+			Heal(item.intensity);
+		}
 
-		item.takenEffect.Play ();
-		Destroy (item.gameObject);
+		item.takenEffect.Play();
+		Destroy(item.gameObject);
 	}
 
 	void Heal(float amount) {
-		GameObject thisObject = Instantiate (info, info.transform.position, Quaternion.identity);
-		thisObject.SetActive (true);
-		thisObject.GetComponent<TextMesh> ().color = ColorFromHex(infoHealColor);
-		thisObject.GetComponent<TextMesh> ().text = "HP +" + Mathf.RoundToInt(amount);
+		GameObject thisObject = Instantiate(info, info.transform.position, Quaternion.identity);
+		thisObject.SetActive(true);
+		thisObject.GetComponent<TextMesh>().color = ColorFromHex(infoHealColor);
+		thisObject.GetComponent<TextMesh>().text = "HP +" + Mathf.RoundToInt(amount);
 
-		weakBody.Heal (amount);
+		weakBody.Heal(amount);
 	}
 
 	void ShowAttackMotion() {
@@ -92,13 +93,13 @@ public class PlayerController : MonoBehaviour {
 			if (attackType == "Q") {
 				float prepareTime = (attackDuration - qRecoveryTime) * qPreparePartRatio;
 				float realAttackTime = (attackDuration - qRecoveryTime) - prepareTime;
-				GameObject rightArm = GameObject.FindWithTag ("RightArm");
+				GameObject rightArm = GameObject.FindWithTag("RightArm");
 				Vector3 original = rightArm.transform.localRotation.eulerAngles;
 				if (currentTime < attackBeginTime + prepareTime) { // prepare motion
 					float beginAngle = 0;
 					float endAngle = -90;
 					float progressRatio = (currentTime - attackBeginTime) / prepareTime;
-					rightArm.transform.localRotation = Quaternion.Euler (new Vector3 (beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
+					rightArm.transform.localRotation = Quaternion.Euler(new Vector3(beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
 					//rightArm.transform.localScale = new Vector3(10, 10, 10);
 					//Destroy (rightArm);
 					//Debug.Log ("Here1:  " + progressRatio + rightArm);
@@ -108,12 +109,12 @@ public class PlayerController : MonoBehaviour {
 					}
 
 					if (!weapon.inAttackMotion) {
-						weapon.StartAttack ();
+						weapon.StartAttack();
 					}
 					float beginAngle = -90;
 					float endAngle = 20;
 					float progressRatio = (currentTime - (attackBeginTime + prepareTime)) / realAttackTime;
-					rightArm.transform.localRotation = Quaternion.Euler (new Vector3 (beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
+					rightArm.transform.localRotation = Quaternion.Euler(new Vector3(beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
 					//Debug.Log("Here2:  " + progressRatio);
 				}
 			} else if (attackType == "W") {
@@ -121,13 +122,13 @@ public class PlayerController : MonoBehaviour {
 					return;
 				}
 				if (!weapon.inAttackMotion) {
-					weapon.StartAttack ();
+					weapon.StartAttack();
 					wStartYRotation = transform.localRotation.eulerAngles.y;
 				}
 				float beginAngle = 60;
 				float endAngle = 360;
 				float progressRatio = (currentTime - attackBeginTime) / (attackDuration - wRecoveryTime);
-				transform.localRotation = Quaternion.Euler (new Vector3 (0, wStartYRotation + beginAngle + (endAngle - beginAngle) * progressRatio, 0));
+				transform.localRotation = Quaternion.Euler(new Vector3(0, wStartYRotation + beginAngle + (endAngle - beginAngle) * progressRatio, 0));
 			}
 		} else {
 		}
@@ -144,44 +145,50 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
-		ShowAttackMotion ();
+		ShowAttackMotion();
 
-		manageStamina ();
+		manageStamina();
 
-		gameController.SetLevel (level);
-		gameController.SetHp (weakBody.hp, weakBody.maxHp);
-		gameController.SetExp (exp, level * expPerLevel);
-		gameController.SetStamina (stamina, maxStamina);
+		gameController.SetLevel(level);
+		gameController.SetHp(weakBody.hp, weakBody.maxHp);
+		gameController.SetExp(exp, level * expPerLevel);
+		gameController.SetStamina(stamina, maxStamina);
 
-		bool isInAttackMotion = IsInAttackMotion ();
-		// Ignore input while in attack motion
+		bool isInAttackMotion = IsInAttackMotion();
+		// Ignore input while in some attack motions
 		if (isInAttackMotion) {
+			if (attackType == "Q") {
+				return;
+			}
 			//return;
 		} else {
-			weapon.StopAttack ();
+			if (weapon.inAttackMotion) {
+				weapon.StopAttack();
+			}
 		}
 
-		UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
+		// Process input command 
+		UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 		agent.enabled = true;
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		if (terrain.Raycast(ray, out hit, 1000)) {
-			if (Input.GetMouseButton(1)) { // move unit
+			if (Input.GetMouseButton(1)) { // move 
 				// Immediately face destination
 				//Face(hit.point);
-				agent.destination = hit.point;	
+				agent.destination = hit.point;
 			}
 
 			if (!isInAttackMotion) {
-				if (Input.GetKey (KeyCode.Q)) {
+				if (Input.GetKey(KeyCode.Q)) {
 					attackType = "Q";
-					Attack (hit.point);
-				} else if (Input.GetKey (KeyCode.W)) {
+					Attack(hit.point);
+				} else if (Input.GetKey(KeyCode.W)) {
 					attackType = "W";
-					Attack (hit.point);
-				} else if (Input.GetKey (KeyCode.E)) {
+					Attack(hit.point);
+				} else if (Input.GetKey(KeyCode.E)) {
 					attackType = "E";
-					Attack (hit.point);
+					Attack(hit.point);
 				}
 			}
 		}
@@ -193,7 +200,7 @@ public class PlayerController : MonoBehaviour {
 
 	void Face(Vector3 destination) {
 		Vector3 direction = destination - transform.position;
-		transform.rotation = Quaternion.LookRotation (new Vector3(direction.x, 0, direction.z));
+		transform.rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
 		GetComponent<Rigidbody>().velocity = Vector3.zero;
 	}
 
@@ -203,16 +210,16 @@ public class PlayerController : MonoBehaviour {
 		if (GetComponent<Unit>().isInHitRecovery()) {
 			return;
 		}
-		Face (destination);
-		float attackDuration = GetAttackDuration ();
+		Face(destination);
+		float attackDuration = GetAttackDuration();
 		if (stamina > 0) {
 			stamina -= weapon.staminaCost;
 			attackBeginTime = currentTime;
 			attackEndTime = currentTime + attackDuration;
-			GetComponent<UnityEngine.AI.NavMeshAgent> ().enabled = false;
-			attackVoice.Play ();
+			GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
+			attackVoice.Play();
 		} else {
-			notEnoughStamina ();
+			notEnoughStamina();
 		}
 	}
 
@@ -232,7 +239,7 @@ public class PlayerController : MonoBehaviour {
 
 	Color ColorFromHex(string hex) {
 		Color color;
-		ColorUtility.TryParseHtmlString (hex, out color);
+		ColorUtility.TryParseHtmlString(hex, out color);
 		return color;
 	}
 }

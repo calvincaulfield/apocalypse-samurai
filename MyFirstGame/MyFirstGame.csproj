@@ -286,20 +286,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Models\Gems Ultimate Pack\Scripts\AnimationScript.cs" />
-    <Compile Include="Assets\Scripts\Bgm.cs" />
-    <Compile Include="Assets\Scripts\ChasePlayer.cs" />
-    <Compile Include="Assets\Scripts\DeactivateWeaponOnHit.cs" />
-    <Compile Include="Assets\Scripts\DestroyByTime.cs" />
-    <Compile Include="Assets\Scripts\FaceUser.cs" />
-    <Compile Include="Assets\Scripts\GameController.cs" />
-    <Compile Include="Assets\Scripts\Item.cs" />
-    <Compile Include="Assets\Scripts\ItemGetter.cs" />
-    <Compile Include="Assets\Scripts\JumpingEnemy.cs" />
-    <Compile Include="Assets\Scripts\LinearAnimation.cs" />
-    <Compile Include="Assets\Scripts\PlayerController.cs" />
-    <Compile Include="Assets\Scripts\Unit.cs" />
-    <Compile Include="Assets\Scripts\WeakBody.cs" />
-    <Compile Include="Assets\Scripts\Weapon.cs" />
+    <Compile Include="Assets\Scripts\Function\ChasePlayer.cs" />
+    <Compile Include="Assets\Scripts\Function\DestroyByTime.cs" />
+    <Compile Include="Assets\Scripts\Function\FaceUser.cs" />
+    <Compile Include="Assets\Scripts\Function\ItemGetter.cs" />
+    <Compile Include="Assets\Scripts\Function\JumpingEnemy.cs" />
+    <Compile Include="Assets\Scripts\Function\LinearAnimation.cs" />
+    <Compile Include="Assets\Scripts\Game\Bgm.cs" />
+    <Compile Include="Assets\Scripts\Game\GameController.cs" />
+    <Compile Include="Assets\Scripts\Object\DeactivateWeaponOnHit.cs" />
+    <Compile Include="Assets\Scripts\Object\Item.cs" />
+    <Compile Include="Assets\Scripts\Object\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\Object\Unit.cs" />
+    <Compile Include="Assets\Scripts\Object\WeakBody.cs" />
+    <Compile Include="Assets\Scripts\Object\Weapon.cs" />
+    <Compile Include="Assets\Scripts\Tutorial\Tutorial.cs" />
+    <Compile Include="Assets\Scripts\Tutorial\TutorialTarget.cs" />
+    <Compile Include="Assets\UiLanguage.cs" />
     <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\FxSplash.cs" />
     <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\LaunchEffect.cs" />
   </ItemGroup>
