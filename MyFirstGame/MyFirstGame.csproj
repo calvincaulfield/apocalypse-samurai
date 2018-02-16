@@ -302,7 +302,7 @@
     <Compile Include="Assets\Scripts\Object\Weapon.cs" />
     <Compile Include="Assets\Scripts\Tutorial\Tutorial.cs" />
     <Compile Include="Assets\Scripts\Tutorial\TutorialTarget.cs" />
-    <Compile Include="Assets\UiLanguage.cs" />
+    <Compile Include="Assets\Scripts\Tutorial\UiLanguage.cs" />
     <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\FxSplash.cs" />
     <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\LaunchEffect.cs" />
   </ItemGroup>

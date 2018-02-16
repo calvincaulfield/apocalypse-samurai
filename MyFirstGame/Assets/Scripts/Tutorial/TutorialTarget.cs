@@ -7,6 +7,7 @@ public class TutorialTarget : MonoBehaviour {
 	public int number;
 	public TextMesh text;
 	public Tutorial tutorial;
+	public UiLanguage uiLanguage;
 
 	// Use this for initialization
 	void Start () {

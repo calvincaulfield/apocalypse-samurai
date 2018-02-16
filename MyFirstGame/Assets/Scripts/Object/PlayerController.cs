@@ -51,18 +51,22 @@ public class PlayerController : MonoBehaviour {
 		stamina = maxStamina;
 	}
 
-	public void Kill(Unit enemy) {
+	public void EarnExp(int earnedExp) {
 		GameObject thisObject = Instantiate(info, info.transform.position, Quaternion.identity);
 		thisObject.SetActive(true);
 		thisObject.GetComponent<TextMesh>().color = ColorFromHex(infoExpColor);
-		thisObject.GetComponent<TextMesh>().text = "Exp +" + enemy.exp;
+		thisObject.GetComponent<TextMesh>().text = "Exp +" + earnedExp;
 
-		exp += enemy.exp;
-		if (exp >= level * expPerLevel) {
+		exp += earnedExp;
+		while (exp >= level * expPerLevel) {			
+			exp -= level * expPerLevel;
 			level += 1;
-			exp = 0;
-			gameController.AlertLevelUp();
+			gameController.AlertLevelUp(level);
 		}
+	}
+
+	public void Kill(Unit enemy) {
+		EarnExp(enemy.exp);
 	}
 
 	public void TakeItem(Item item) {
