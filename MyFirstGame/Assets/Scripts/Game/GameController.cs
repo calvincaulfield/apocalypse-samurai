@@ -34,11 +34,12 @@ public class GameController : MonoBehaviour {
 	public int tutorialStage;
 	public string language;
 	public UiLanguage uiLanguage;
+	public bool inTutorialMode;
+
 
 	void Start() {
 		GetComponent<Bgm> ().PlayBgm (1);
 		InitTutorial();
-		
 	}
 
 	public string GetWord(string key) {
@@ -72,10 +73,16 @@ public class GameController : MonoBehaviour {
 		alertEndTime = Time.time + alertDuration;
 	}
 
+	bool ProceedButtonTouched() {
+		return Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0);
+	}
+
 	void Update() {
 		MoveCamera ();
 		clearAlertIfNeeded ();
-		DoTutorial();
+		if (inTutorialMode && ProceedButtonTouched()) {
+			ProceedTutorial();
+		}
 	}
 
 	void clearAlertIfNeeded() {
@@ -91,40 +98,74 @@ public class GameController : MonoBehaviour {
 			return "Tutorial_" + number;
 		}
 	}
-	void showTutorialText(int stage) {
-		tutorial.ShowGuide(stage, GetWord(GetTutorialKey(stage)));
-	} 
 
 	void InitTutorial() {
-		tutorialStage = 1;
+		tutorialStage = 0;
+		inTutorialMode = true;
 
-		terrain.SetActive(false);
 		light.gameObject.SetActive(false);
+		terrain.SetActive(false);		
+		playerController.gameObject.SetActive(false);
 		map.SetActive(false);
+
 		statusUi.SetActive(false);
 		enemy.SetActive(false);
 		item.SetActive(false);
-		playerController.gameObject.SetActive(false);
+		
 		tutorialObject.SetActive(false);
 	}
 
-	void DoTutorial() {
-		if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
-			showTutorialText(tutorialStage);
-			if (tutorialStage == 3) {
-				light.gameObject.SetActive(true);
-			} else if (tutorialStage == 4) {
-				terrain.SetActive(true);
-			} else if (tutorialStage == 5) {
-				playerController.gameObject.SetActive(true);
-			}
+	void StopTutorial() {
+		inTutorialMode = false;
+		playerController.movable = true;
+	} 
 
-			tutorialStage++;
-		}
+	bool isLastMessage(int tutorialStage) {
+		return tutorialStage == 11 || tutorialStage == 22 || tutorialStage == 34;
 	}
 
-	public void TutorialEnded(int tutorialStage) {
-		//light.intensity = 1.0f;
+	void ProceedTutorial() {			
+		playerController.movable = false;
+
+		// Tutorial stops at some points, waiting for user to complete objective
+		if (isLastMessage(tutorialStage)) {
+			if (tutorialStage == 11) {
+				tutorialStage = 20;				
+			} else if (tutorialStage == 22) {
+				tutorialStage = 30;
+			} else if (tutorialStage == 34) {
+				tutorialStage = 40;
+			}
+			StopTutorial();
+		} else {
+			tutorialStage++;
+		}
+
+		if (tutorialStage == 3) {
+			light.gameObject.SetActive(true);
+		} else if (tutorialStage == 4) {
+			terrain.SetActive(true);
+		} else if (tutorialStage == 5) {
+			playerController.gameObject.SetActive(true);
+		} else if (tutorialStage == 6) {
+			map.SetActive(true);
+		} else if (tutorialStage == 20) {
+			tutorialObject.SetActive(true);
+		} else if (tutorialStage == 30) {
+			enemy.SetActive(true);
+			statusUi.SetActive(true);
+		}
+		showTutorialText(tutorialStage);
+		
+	}
+
+	void showTutorialText(int stage) {
+		tutorial.ShowGuide(stage, uiLanguage.GetWord(language, GetTutorialKey(stage)));
+	}
+
+	public void TutorialObjectiveComplete() {
+		inTutorialMode = true;
+		ProceedTutorial();
 	}
 
 	void MoveCamera() {
@@ -137,5 +178,10 @@ public class GameController : MonoBehaviour {
 			integer = 0;
 		}
 		return integer;
+	}
+
+	public void WaypoinReached(int number) {
+		inTutorialMode = true;
+		ProceedTutorial();
 	}
 }

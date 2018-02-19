@@ -305,6 +305,7 @@
     <Compile Include="Assets\Scripts\Tutorial\UiLanguage.cs" />
     <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\FxSplash.cs" />
     <Compile Include="Assets\VFX\FireExplosionVFX\Scripts\LaunchEffect.cs" />
+    <Compile Include="Assets\Waypoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Sound\explosionsoundslite\readme.txt" />

@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour {
 	public GameController gameController;
 	public Collider terrain;
 
-
+	public bool movable;
 
 	public float qSpeed = 2.0f;
 	public float qPreparePartRatio = 0.7f;
@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour {
 		level = 1;
 		exp = 0;
 		stamina = maxStamina;
+		movable = true;
 	}
 
 	public void EarnExp(int earnedExp) {
@@ -103,12 +104,11 @@ public class PlayerController : MonoBehaviour {
 					float beginAngle = 0;
 					float endAngle = -90;
 					float progressRatio = (currentTime - attackBeginTime) / prepareTime;
-					rightArm.transform.localRotation = Quaternion.Euler(new Vector3(beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
-					//rightArm.transform.localScale = new Vector3(10, 10, 10);
-					//Destroy (rightArm);
-					//Debug.Log ("Here1:  " + progressRatio + rightArm);
+					rightArm.transform.localRotation = Quaternion.Euler(new Vector3(
+						beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
 				} else {
-					if (currentTime > attackBeginTime + attackDuration - qRecoveryTime) { // Player will be freezed during recovery time
+					// Player will be freezed during recovery time
+					if (currentTime > attackBeginTime + attackDuration - qRecoveryTime) { 
 						return;
 					}
 
@@ -118,11 +118,13 @@ public class PlayerController : MonoBehaviour {
 					float beginAngle = -90;
 					float endAngle = 20;
 					float progressRatio = (currentTime - (attackBeginTime + prepareTime)) / realAttackTime;
-					rightArm.transform.localRotation = Quaternion.Euler(new Vector3(beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
+					rightArm.transform.localRotation = Quaternion.Euler(new Vector3(
+						beginAngle + (endAngle - beginAngle) * progressRatio, original.y, original.z));
 					//Debug.Log("Here2:  " + progressRatio);
 				}
 			} else if (attackType == "W") {
-				if (currentTime > attackBeginTime + attackDuration - wRecoveryTime) { // Player will be freezed during recovery time
+				// Player will be freezed during recovery time
+				if (currentTime > attackBeginTime + attackDuration - wRecoveryTime) { 
 					return;
 				}
 				if (!weapon.inAttackMotion) {
@@ -132,7 +134,8 @@ public class PlayerController : MonoBehaviour {
 				float beginAngle = 60;
 				float endAngle = 360;
 				float progressRatio = (currentTime - attackBeginTime) / (attackDuration - wRecoveryTime);
-				transform.localRotation = Quaternion.Euler(new Vector3(0, wStartYRotation + beginAngle + (endAngle - beginAngle) * progressRatio, 0));
+				transform.localRotation = Quaternion.Euler(new Vector3(
+					0, wStartYRotation + beginAngle + (endAngle - beginAngle) * progressRatio, 0));
 			}
 		} else {
 		}
@@ -149,6 +152,10 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
+		if (!movable) {
+			return;
+		}
+
 		ShowAttackMotion();
 
 		manageStamina();
@@ -159,12 +166,12 @@ public class PlayerController : MonoBehaviour {
 		gameController.SetStamina(stamina, maxStamina);
 
 		bool isInAttackMotion = IsInAttackMotion();
-		// Ignore input while in some attack motions
+		
 		if (isInAttackMotion) {
+			// Ignore input while in certain attack motions
 			if (attackType == "Q") {
 				return;
 			}
-			//return;
 		} else {
 			if (weapon.inAttackMotion) {
 				weapon.StopAttack();
@@ -177,9 +184,9 @@ public class PlayerController : MonoBehaviour {
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		if (terrain.Raycast(ray, out hit, 1000)) {
-			if (Input.GetMouseButton(1)) { // move 
+			if (Input.GetMouseButton(1)) { // right click: move 
 				// Immediately face destination
-				//Face(hit.point);
+				// Face(hit.point);
 				agent.destination = hit.point;
 			}
 
@@ -214,6 +221,7 @@ public class PlayerController : MonoBehaviour {
 		if (GetComponent<Unit>().isInHitRecovery()) {
 			return;
 		}
+
 		Face(destination);
 		float attackDuration = GetAttackDuration();
 		if (stamina > 0) {

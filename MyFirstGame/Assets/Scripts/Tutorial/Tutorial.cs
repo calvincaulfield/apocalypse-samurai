@@ -32,6 +32,9 @@ public class Tutorial : MonoBehaviour {
 			touchSound.Play();
 			if (target.number == bonusTargetNumber) {
 				player.EarnExp(bonusExp);
+			} else if (target.number == (bonusTargetNumber - 1)) {
+				
+				gameController.TutorialObjectiveComplete();
 			}
 			return true;
 		} else {
