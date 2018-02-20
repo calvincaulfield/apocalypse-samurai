@@ -8,6 +8,8 @@ public class Unit : MonoBehaviour {
 
 	public int exp;
 	public GameObject infoDamage;
+	public string id;
+	public TextMesh namePlate;
 
 	public float hitRecovery = 1.0f;
 	public float hitRecoveryEnd;
@@ -17,6 +19,12 @@ public class Unit : MonoBehaviour {
 	public Material woundedMeterial;
 	public Color woundedColor;
 	public GameObject colorBody;
+
+	public virtual void Start() {
+		if (namePlate) {
+			namePlate.text = GameObject.FindWithTag("GameController").GetComponent<GameController>().GetWord(id);
+		}
+	}
 
 	public virtual void TookDamage(int damage) {
 		//Debug.Log ("Enemy Took Damage");

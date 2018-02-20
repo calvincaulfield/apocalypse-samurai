@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class Waypoint : MonoBehaviour {
 
-	public int number;
+	public int tutorialStage;
 
 	public GameController gameController;
 
 	private void OnTriggerEnter(Collider other) {
-		gameController.WaypoinReached(number);
-
+		if (gameController.tutorialStage == tutorialStage) {
+			gameController.TutorialObjectiveComplete(tutorialStage);
+			Destroy(gameObject);
+		}
 	}
 }

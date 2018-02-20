@@ -34,7 +34,7 @@ public class Tutorial : MonoBehaviour {
 				player.EarnExp(bonusExp);
 			} else if (target.number == (bonusTargetNumber - 1)) {
 				
-				gameController.TutorialObjectiveComplete();
+				gameController.TutorialObjectiveComplete(20);
 			}
 			return true;
 		} else {

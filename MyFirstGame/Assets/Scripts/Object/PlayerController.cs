@@ -25,8 +25,6 @@ public class PlayerController : MonoBehaviour {
 	public GameController gameController;
 	public Collider terrain;
 
-	public bool movable;
-
 	public float qSpeed = 2.0f;
 	public float qPreparePartRatio = 0.7f;
 	public float qRecoveryTime = 0.3f;
@@ -34,22 +32,21 @@ public class PlayerController : MonoBehaviour {
 	public float wSpeed = 1.0f;
 	public float wRecoveryTime = 0.3f;
 	private float wStartYRotation = 0.0f;
+	public int qAttackTotalNumber = 0;
 
-	private GameObject camera;
 	private float attackBeginTime;
 	private float attackEndTime;
-	private WeakBody weakBody;
-
-
+	private bool inAttackPrepareMotion;
 	private string attackType;
 
+	private WeakBody weakBody;	
+
 	void Start() {
-		camera = GameObject.FindWithTag("MainCamera");
 		weakBody = GetComponent<WeakBody>();
 		level = 1;
 		exp = 0;
 		stamina = maxStamina;
-		movable = true;
+		inAttackPrepareMotion = false;
 	}
 
 	public void EarnExp(int earnedExp) {
@@ -112,7 +109,8 @@ public class PlayerController : MonoBehaviour {
 						return;
 					}
 
-					if (!weapon.inAttackMotion) {
+					if (inAttackPrepareMotion) {
+						inAttackPrepareMotion = false;
 						weapon.StartAttack();
 					}
 					float beginAngle = -90;
@@ -127,7 +125,8 @@ public class PlayerController : MonoBehaviour {
 				if (currentTime > attackBeginTime + attackDuration - wRecoveryTime) { 
 					return;
 				}
-				if (!weapon.inAttackMotion) {
+				if (inAttackPrepareMotion) {
+					inAttackPrepareMotion = false;
 					weapon.StartAttack();
 					wStartYRotation = transform.localRotation.eulerAngles.y;
 				}
@@ -152,10 +151,6 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
-		if (!movable) {
-			return;
-		}
-
 		ShowAttackMotion();
 
 		manageStamina();
@@ -228,8 +223,16 @@ public class PlayerController : MonoBehaviour {
 			stamina -= weapon.staminaCost;
 			attackBeginTime = currentTime;
 			attackEndTime = currentTime + attackDuration;
+			inAttackPrepareMotion = true;
+
 			GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
 			attackVoice.Play();
+			if (attackType == "Q") {
+				qAttackTotalNumber++;
+				if (qAttackTotalNumber == 3) {
+					gameController.TutorialObjectiveComplete(40);
+				}
+			}
 		} else {
 			notEnoughStamina();
 		}
