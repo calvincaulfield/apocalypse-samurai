@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour {
 
-	public int attackDamage;
-	public int staminaCost;
+	public float attackDamage;
 	public bool inAttackMotion;
 	public bool playerWeapon;
 	public PlayerController wielder;
@@ -24,7 +23,7 @@ public class Weapon : MonoBehaviour {
 	}  
 
 	public virtual void Hit() {
-		inAttackMotion = false;
+
 	}
 
 }

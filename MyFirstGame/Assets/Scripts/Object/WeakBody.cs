@@ -64,8 +64,11 @@ public class WeakBody : MonoBehaviour {
 				if (owner) {
 					Destroy (owner.gameObject);
 				}
-				if (!isPlayer) {
-					other.GetComponent<Weapon> ().wielder.GetComponent<PlayerController>().Kill (owner);
+				if (isPlayer) {
+					GameObject.FindWithTag("GameController").GetComponent<GameController>().gameOver();
+				} else
+				{
+					other.GetComponent<Weapon>().wielder.GetComponent<PlayerController>().Kill(owner);
 				}
 			}
 		}

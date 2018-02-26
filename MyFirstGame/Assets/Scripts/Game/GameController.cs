@@ -69,8 +69,14 @@ public class GameController : MonoBehaviour {
 		staminaSlider.GetComponent<RectTransform> ().sizeDelta = new Vector2 (maxStamina * 5, 100);
 	}
 
-	public void AlertLevelUp(int level) {
-		text_Alert.text = GetWord("Level") + " " + level;
+	public void AlertLevelUp(int level, float hpIncrease, float staminaIncrease) {
+		alert(GetWord("Level") + " " + level + "\n" + GetWord("Hp") + " +" + hpIncrease + " " + GetWord("Stamina") + " +" + staminaIncrease,
+			alertDuration);
+	}
+
+	void alert(string text, float duration)
+	{
+		text_Alert.text = text;
 		alertEndTime = Time.time + alertDuration;
 	}
 
@@ -128,10 +134,6 @@ public class GameController : MonoBehaviour {
 		Time.timeScale = 1.0f;
 	} 
 
-	bool isLastMessage(int tutorialStage) {
-		return tutorialStage == 11 || tutorialStage == 22 || tutorialStage == 33;
-	}
-
 	void ProceedTutorial() {
 		if (noTutorialMode) {
 			return;
@@ -139,11 +141,15 @@ public class GameController : MonoBehaviour {
 
 		Time.timeScale = 0.0f;
 
+
 		switch (tutorialStage) {
 			case 11:
 			case 22:
-			case 33:
+			case 34:
 			case 41:
+			case 53:
+			case 63:
+			case 74:
 				StopTutorial();
 				break;
 		}	
@@ -156,12 +162,19 @@ public class GameController : MonoBehaviour {
 			case 22:
 				tutorialStage = 30;
 				break;
-			case 33:
+			case 34:
 				tutorialStage = 40;
 				playerController.qAttackTotalNumber = 0;
 				break;
 			case 41:
 				tutorialStage = 50;
+				break;
+			case 53:
+				tutorialStage = 60;				
+				break;
+			case 63:
+				tutorialStage = 70;
+				playerController.wAttackTotalNumber = 0;
 				break;
 			default:
 				tutorialStage++;
@@ -187,6 +200,7 @@ public class GameController : MonoBehaviour {
 				break;
 			case 30:
 				enemy.SetActive(true);
+				item.SetActive(true);
 				statusUi.SetActive(true);
 				break;
 		}
@@ -203,6 +217,18 @@ public class GameController : MonoBehaviour {
 			inTutorialMode = true;
 			ProceedTutorial();
 		}
+	}
+
+	public void gameOver()
+	{
+		alert(GetWord("GameOver"), 5.0f);
+		Time.timeScale = 0;
+	}
+
+	public void winGame()
+	{
+		alert(GetWord("WinGame"), 5.0f);
+		Time.timeScale = 0;
 	}
 
 	void MoveCamera() {

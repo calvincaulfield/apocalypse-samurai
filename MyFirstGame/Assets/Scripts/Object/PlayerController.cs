@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour {
 
 	public float qStamina;
 	public float wStamina;
+	public float qDamage;
+	public float wDamage;
 
 	public AudioSource attackVoice;
 
@@ -33,6 +35,7 @@ public class PlayerController : MonoBehaviour {
 	public float wRecoveryTime = 0.3f;
 	private float wStartYRotation = 0.0f;
 	public int qAttackTotalNumber = 0;
+	public int wAttackTotalNumber = 0;
 
 	private float attackBeginTime;
 	private float attackEndTime;
@@ -59,12 +62,21 @@ public class PlayerController : MonoBehaviour {
 		while (exp >= level * expPerLevel) {			
 			exp -= level * expPerLevel;
 			level += 1;
-			gameController.AlertLevelUp(level);
+
+			float hpIncrease = 10.0f;
+			float staminaIncrease = 2.0f;
+			gameController.AlertLevelUp(level, hpIncrease, staminaIncrease);					
+			weakBody.maxHp += 10;
+			maxStamina += 2;
 		}
 	}
 
 	public void Kill(Unit enemy) {
 		EarnExp(enemy.exp);
+		if (enemy.id == "Enemy_05")
+		{
+			gameController.winGame();
+		}
 	}
 
 	public void TakeItem(Item item) {
@@ -187,15 +199,17 @@ public class PlayerController : MonoBehaviour {
 
 			if (!isInAttackMotion) {
 				if (Input.GetKey(KeyCode.Q)) {
+					weapon.attackDamage = qDamage;
 					attackType = "Q";
 					Attack(hit.point);
 				} else if (Input.GetKey(KeyCode.W)) {
+					weapon.attackDamage = wDamage;
 					attackType = "W";
 					Attack(hit.point);
 				} else if (Input.GetKey(KeyCode.E)) {
 					attackType = "E";
 					Attack(hit.point);
-				}
+				}				
 			}
 		}
 	}
@@ -220,17 +234,35 @@ public class PlayerController : MonoBehaviour {
 		Face(destination);
 		float attackDuration = GetAttackDuration();
 		if (stamina > 0) {
-			stamina -= weapon.staminaCost;
+			if (attackType == "Q")
+			{
+				stamina -= qStamina;
+			} else if (attackType == "W")
+			{
+				stamina -= wStamina;
+			} else
+			{
+				Debug.Log("Attack error");
+			}
 			attackBeginTime = currentTime;
 			attackEndTime = currentTime + attackDuration;
 			inAttackPrepareMotion = true;
 
 			GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
 			attackVoice.Play();
+
+			// Tutorial progress
 			if (attackType == "Q") {
 				qAttackTotalNumber++;
 				if (qAttackTotalNumber == 3) {
 					gameController.TutorialObjectiveComplete(40);
+				}
+			} else if (attackType == "W")
+			{
+				wAttackTotalNumber++;
+				if (wAttackTotalNumber == 3)
+				{
+					gameController.TutorialObjectiveComplete(70);
 				}
 			}
 		} else {

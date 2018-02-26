@@ -8,7 +8,13 @@ public class Waypoint : MonoBehaviour {
 
 	public GameController gameController;
 
+
 	private void OnTriggerEnter(Collider other) {
+		if (gameController.noTutorialMode)
+		{
+			Destroy(gameObject);
+		}
+
 		if (gameController.tutorialStage == tutorialStage) {
 			gameController.TutorialObjectiveComplete(tutorialStage);
 			Destroy(gameObject);
