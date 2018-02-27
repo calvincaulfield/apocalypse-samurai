@@ -15,8 +15,13 @@ public class TutorialTarget : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		if (tutorial.touched(this)) {
-			Destroy(gameObject);
+		//Debug.Log(other.tag);
+		if (other.gameObject.tag == "Player")
+		{
+			if (tutorial.touched(this))
+			{
+				gameObject.SetActive(false);
+			}
 		}
 	}
 }

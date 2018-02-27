@@ -10,14 +10,15 @@ public class Waypoint : MonoBehaviour {
 
 
 	private void OnTriggerEnter(Collider other) {
+		//Debug.Log(other.tag);
 		if (gameController.noTutorialMode)
 		{
-			Destroy(gameObject);
+			gameObject.SetActive(false);
 		}
 
-		if (gameController.tutorialStage == tutorialStage) {
+		if (other.gameObject.tag == "Player" && gameController.tutorialStage == tutorialStage) {
 			gameController.TutorialObjectiveComplete(tutorialStage);
-			Destroy(gameObject);
+			gameObject.SetActive(false);
 		}
 	}
 }

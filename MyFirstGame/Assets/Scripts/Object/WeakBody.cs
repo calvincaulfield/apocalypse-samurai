@@ -62,7 +62,7 @@ public class WeakBody : MonoBehaviour {
 					explosionSound.Play ();
 				}
 				if (owner) {
-					Destroy (owner.gameObject);
+					owner.gameObject.SetActive(false);
 				}
 				if (isPlayer) {
 					GameObject.FindWithTag("GameController").GetComponent<GameController>().gameOver();

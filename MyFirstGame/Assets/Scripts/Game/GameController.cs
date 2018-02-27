@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour {
 
 	public GameObject camera;
 	public GameObject terrain;
-	public Light light;
+	public GameObject light;
 	public GameObject map;
 	public GameObject statusUi;
 	public GameObject enemy;
@@ -30,17 +30,31 @@ public class GameController : MonoBehaviour {
 	public float alertDuration;
 	private float alertEndTime;
 
+	public Button restart;
+	public Button quit;
+
 	public bool noTutorialMode;
 	public Tutorial tutorial;
 	public int tutorialStage;
 	public string language;
 	public UiLanguage uiLanguage;
 	public bool inTutorialMode;
+	public static bool isRetry = false;
 
 
 	void Start() {
 		GetComponent<Bgm> ().PlayBgm (1);
-		InitTutorial();
+		if (isRetry)
+		{
+			noTutorialMode = true;
+			Time.timeScale = 1;
+		} else
+		{
+			InitTutorial();
+		}
+
+		restart.onClick.AddListener(Restart);
+		quit.onClick.AddListener(Quit);
 	}
 
 	public string GetWord(string key) {
@@ -70,8 +84,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void AlertLevelUp(int level, float hpIncrease, float staminaIncrease) {
-		alert(GetWord("Level") + " " + level + "\n" + GetWord("Hp") + " +" + hpIncrease + " " + GetWord("Stamina") + " +" + staminaIncrease,
-			alertDuration);
+		alert(GetWord("Level") + " " + level, alertDuration);
 	}
 
 	void alert(string text, float duration)
@@ -88,7 +101,7 @@ public class GameController : MonoBehaviour {
 		MoveCamera ();
 		clearAlertIfNeeded ();
 		if (inTutorialMode && ProceedButtonTouched()) {
-			ProceedTutorial();
+			ProceedTutorial(Input.GetMouseButtonDown(0));
 		}
 	}
 
@@ -111,9 +124,7 @@ public class GameController : MonoBehaviour {
 			return;
 		}
 
-		//tutorialStage = 0;
 		inTutorialMode = true;
-
 		if (tutorialStage == 0) {
 			light.gameObject.SetActive(false);
 			terrain.SetActive(false);
@@ -125,8 +136,9 @@ public class GameController : MonoBehaviour {
 			item.SetActive(false);
 
 			tutorialObject.SetActive(false);
-		}
 
+			ProceedTutorial();
+		}
 	}
 
 	void StopTutorial() {
@@ -134,16 +146,15 @@ public class GameController : MonoBehaviour {
 		Time.timeScale = 1.0f;
 	} 
 
-	void ProceedTutorial() {
+	void ProceedTutorial(bool yes = true) {
 		if (noTutorialMode) {
 			return;
 		}
 
 		Time.timeScale = 0.0f;
 
-
 		switch (tutorialStage) {
-			case 11:
+			case 15:
 			case 22:
 			case 34:
 			case 41:
@@ -156,7 +167,16 @@ public class GameController : MonoBehaviour {
 		
 		// Manage transition
 		switch (tutorialStage) {
-			case 11: 
+			case 1:
+				if (yes)
+				{
+					tutorialStage = 5;
+				} else
+				{
+					StartGame(true);
+				}
+				break;
+			case 15: 
 				tutorialStage = 20;
 				break;
 			case 22:
@@ -176,23 +196,28 @@ public class GameController : MonoBehaviour {
 				tutorialStage = 70;
 				playerController.wAttackTotalNumber = 0;
 				break;
+			case 74:
+				tutorialStage = 80;
+				playerController.wAttackTotalNumber = 0;
+				break;
 			default:
+				// Consecutive messages
 				tutorialStage++;
 				break;
 		}
 
 		// Do things for the new stage
 		switch (tutorialStage) {
-			case 3:
+			case 7:
 				light.gameObject.SetActive(true);
 				break;
-			case 4: 
+			case 8: 
 				terrain.SetActive(true);
 				break;
-			case 5:
+			case 9:
 				playerController.gameObject.SetActive(true);
 				break;
-			case 6:
+			case 10:
 				map.SetActive(true);
 				break;
 			case 20:
@@ -203,12 +228,16 @@ public class GameController : MonoBehaviour {
 				item.SetActive(true);
 				statusUi.SetActive(true);
 				break;
+			case 81:
+			case 91:
+				break;
 		}
 
 		showTutorialText(tutorialStage);		
 	}
 
 	void showTutorialText(int stage) {
+		alert("", 0);
 		tutorial.ShowGuide(stage, uiLanguage.GetWord(language, GetTutorialKey(stage)));
 	}
 
@@ -221,14 +250,32 @@ public class GameController : MonoBehaviour {
 
 	public void gameOver()
 	{
-		alert(GetWord("GameOver"), 5.0f);
-		Time.timeScale = 0;
+		noTutorialMode = false;
+		tutorialStage = 80;
+		ProceedTutorial();
 	}
 
 	public void winGame()
 	{
-		alert(GetWord("WinGame"), 5.0f);
-		Time.timeScale = 0;
+		noTutorialMode = false;
+		tutorialStage = 90;
+		ProceedTutorial();
+	}
+
+	void Restart()
+	{
+		StartGame(false);
+	}
+
+	void Quit()
+	{
+		Application.Quit();
+	}
+
+	public void StartGame(bool retry)
+	{
+		isRetry = retry;
+		SceneManager.LoadScene("Main");
 	}
 
 	void MoveCamera() {

@@ -11,7 +11,7 @@ public class Unit : MonoBehaviour {
 	public string id;
 	public TextMesh namePlate;
 
-	public float hitRecovery = 1.0f;
+	public float hitRecovery = 1.5f;
 	public float hitRecoveryEnd;
 
 	public Material normalMaterial;

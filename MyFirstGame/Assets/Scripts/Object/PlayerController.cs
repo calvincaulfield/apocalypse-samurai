@@ -50,6 +50,14 @@ public class PlayerController : MonoBehaviour {
 		exp = 0;
 		stamina = maxStamina;
 		inAttackPrepareMotion = false;
+
+		if (GameController.isRetry)
+		{
+			GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
+			transform.rotation = Quaternion.identity;
+			transform.position = new Vector3(129, 3, 115);
+			GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = true;
+		}
 	}
 
 	public void EarnExp(int earnedExp) {
@@ -65,9 +73,15 @@ public class PlayerController : MonoBehaviour {
 
 			float hpIncrease = 10.0f;
 			float staminaIncrease = 2.0f;
-			gameController.AlertLevelUp(level, hpIncrease, staminaIncrease);					
-			weakBody.maxHp += 10;
-			maxStamina += 2;
+			float damageIncrease = 0.2f;
+
+			gameController.AlertLevelUp(level, hpIncrease, staminaIncrease);
+			weakBody.hp += hpIncrease;
+			weakBody.maxHp += hpIncrease;
+			maxStamina += staminaIncrease;
+
+			qDamage += damageIncrease;
+			wDamage += damageIncrease;
 		}
 	}
 
@@ -75,6 +89,7 @@ public class PlayerController : MonoBehaviour {
 		EarnExp(enemy.exp);
 		if (enemy.id == "Enemy_05")
 		{
+			Debug.Log("win");
 			gameController.winGame();
 		}
 	}
@@ -88,7 +103,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		item.takenEffect.Play();
-		Destroy(item.gameObject);
+		item.gameObject.SetActive(false);
 	}
 
 	void Heal(float amount) {
@@ -138,11 +153,13 @@ public class PlayerController : MonoBehaviour {
 					return;
 				}
 				if (inAttackPrepareMotion) {
-					inAttackPrepareMotion = false;
 					weapon.StartAttack();
+					inAttackPrepareMotion = false;					
 					wStartYRotation = transform.localRotation.eulerAngles.y;
 				}
-				float beginAngle = 60;
+				// W attack is piercing; it can hit multiple enemies with single swing
+				weapon.inAttackMotion = true;
+				float beginAngle = 30;
 				float endAngle = 360;
 				float progressRatio = (currentTime - attackBeginTime) / (attackDuration - wRecoveryTime);
 				transform.localRotation = Quaternion.Euler(new Vector3(
