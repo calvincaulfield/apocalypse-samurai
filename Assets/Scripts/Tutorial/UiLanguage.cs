@@ -19,6 +19,7 @@ public class UiLanguage: MonoBehaviour {
 		data.Add("jpn", jpn);
 		setKor();
 		setJpn();
+		setEng();
 	}
 
 	void setKor() {
@@ -156,6 +157,69 @@ public class UiLanguage: MonoBehaviour {
 		jpn.Add("Enemy_02", "狂狼");
 		jpn.Add("Enemy_03", "突撃戦車");
 		jpn.Add("Enemy_05", "星形の化け物");
+	}
+
+
+	void setEng()
+	{
+		eng.Add("Hp", "HP");
+		eng.Add("Stamina", "Stamina");
+		eng.Add("Level", "Level");
+		eng.Add("Exp", "Exp");
+
+		eng.Add("Tutorial_01", "Left click to view tutorial (you must if this is your first play)\nPress space key to skip tutorial");
+		eng.Add("Tutorial_05", "100 years have passed since 99% of mankind disappeared from earth by nuclear warfare");
+		eng.Add("Tutorial_06", "But again from darkness");
+		eng.Add("Tutorial_07", "Sky,");
+		eng.Add("Tutorial_08", "Land,");
+		eng.Add("Tutorial_09", "Man,");
+		eng.Add("Tutorial_10", "and walls stand");
+		eng.Add("Tutorial_11", "World is totally irradiated\nThe only asylum is inside the walls.");
+		eng.Add("Tutorial_12", "But again, we got information that\nIrradiated mutants infiltrated the walls.");
+		eng.Add("Tutorial_13", "Your mission objective:");
+		eng.Add("Tutorial_14", "\"Search and Destroy all mutants, at all costs.\"");
+		eng.Add("Tutorial_15", "Basic of sword fighting is footwork.\nRight click to move to destinations in order.");
+		eng.Add("Tutorial_20", "");
+
+		eng.Add("Tutorial_21", "There will be a reward for the last destination.\nYou can pass if you don't feel like");
+		eng.Add("Tutorial_22", "March forward。");
+		eng.Add("Tutorial_30", "");
+
+		eng.Add("Tutorial_31", "Next we learn vertical swing.");
+		eng.Add("Tutorial_32", "Face opponent, and press Q");
+		eng.Add("Tutorial_33", "Attack costs stamina\nStamina restores after some time.");
+		eng.Add("Tutorial_34", "Let's practive vertical swing 3 three times. (press Q)");
+		eng.Add("Tutorial_40", "");
+
+		eng.Add("Tutorial_41", "Good\nMarch forward.");
+		eng.Add("Tutorial_50", "");
+
+		eng.Add("Tutorial_51", "You will face irradiated mutants from now\nWhen touched by them, you will lose HP and be unable to attack for a short period.");
+		eng.Add("Tutorial_52", "Each mutant you kill will earn exp\nYou will level up after you have got enough exp.");
+		eng.Add("Tutorial_53", "Now is the time for blood. Kill them all!");
+		eng.Add("Tutorial_60", "");
+
+
+		eng.Add("Tutorial_61", "You will face a bit more dangerous enemies from now on");
+		eng.Add("Tutorial_62", "Press W, and you will do sweeping attack.");
+		eng.Add("Tutorial_63", "Practice sweeping attack 3 times (press W)");
+		eng.Add("Tutorial_70", "");
+
+		eng.Add("Tutorial_71", "Good");
+		eng.Add("Tutorial_72", "Each monster has unique movement and attack pattern.\nUse it to your advantage");
+		eng.Add("Tutorial_73", "Some mutants have been partially irradiated\nWhite part of their body is safe to touch");
+		eng.Add("Tutorial_74", "This ends the tutorial\nGood luck!");
+
+		eng.Add("Tutorial_80", "");
+		eng.Add("Tutorial_81", "You died");
+
+		eng.Add("Tutorial_90", "");
+		eng.Add("Tutorial_91", "Congratulations！\nYou killed all of them\nThanks for playing");
+
+		eng.Add("Enemy_01", "Cute Dog");
+		eng.Add("Enemy_02", "Crazy Wolf");
+		eng.Add("Enemy_03", "Chariot");
+		eng.Add("Enemy_05", "Star-shaped Irradiation");
 	}
 
 	public string GetWord(string lan, string key) {
